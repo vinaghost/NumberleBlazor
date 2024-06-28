@@ -1,0 +1,20 @@
+﻿@inject GameManagerService GameManagerService
+@implements IDisposable
+
+<div class="flip-container">
+	<div class="flipper @_triggerFlipClass" style="transition-delay: @FlipDelay">
+		<div class="front">
+			<div class="flex justify-center items-center h-16 w-16 pb-1 bg-white text-white text-3xl font-bold border-2 border-middlegray @GetFrontBoardCellStateCssClass()">
+                @CellValue
+            </div>
+		</div>
+		<div class="back">
+			<div class="flex justify-center items-center h-16 w-16 pb-1 bg-white text-white text-3xl font-bold border-2 border-middlegray @GetBackBoardCellStateCssClass()">
+                @CellValue
+            </div>
+		</div>
+	</div>
+</div>
+
+
+

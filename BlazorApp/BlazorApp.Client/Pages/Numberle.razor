@@ -1,0 +1,21 @@
+﻿@page "/"
+
+@inject GameManagerService GameManagerService
+@inject LocalizationService LocalizationService
+
+<PageTitle>Wordle</PageTitle>
+
+<div class="flex flex-col justify-between items-center h-full w-full outline-0" @ref="_mainDiv" tabindex="0" @onkeydown="KeyDown">
+    <HeaderBar AncestorComponent="this" />
+
+    <ToastNotification />
+
+    <GameBoard AncestorComponent="this" @ref="_gameBoard" />
+
+    @if (_showStats)
+    {
+        <Modal Title="@LocalizationService["StatsTitle"]" OnCloseCallback="@CloseStats">
+            <StatsDialog />
+        </Modal>
+    }
+</div>
