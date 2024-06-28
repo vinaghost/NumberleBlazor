@@ -10,20 +10,7 @@ namespace BlazorApp.Client.Components
         private BoardCellState _cellState;
 
         [Parameter, EditorRequired]
-        public BoardCellState CellState
-        {
-            get
-            {
-                return _cellState;
-            }
-            set
-            {
-                if (value == BoardCellState.Empty)
-                    _triggerFlipClass = "";
-
-                _cellState = value;
-            }
-        }
+        public BoardCellState CellState { get; set; }
 
         [Parameter, EditorRequired]
         public int RowIndex { get; set; }
@@ -38,6 +25,17 @@ namespace BlazorApp.Client.Components
         protected override void OnInitialized()
         {
             GameManagerService.OnCurrentLineCheckedSolution += TriggerFlip;
+        }
+
+        protected override void OnParametersSet()
+        {
+            if (_cellState != CellState)
+            {
+                _cellState = CellState;
+
+                if (CellState == BoardCellState.Empty)
+                    _triggerFlipClass = "";
+            }
         }
 
         public void Dispose()

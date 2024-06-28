@@ -5,16 +5,16 @@ namespace BlazorApp.Client.Pages
 {
     public partial class Numberle
     {
-        private readonly IReadOnlyList<string> _validKeys = new List<string>()
-        {
+        private readonly IReadOnlyList<string> _validKeys =
+        [
             "ENTER", "BACKSPACE",
             "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
             "A", "S", "D", "F", "G", "H", "J", "K", "L", "Ñ",
             "Z", "X", "C", "V", "B", "N", "M"
-        };
+        ];
 
-        private readonly ElementReference _mainDiv;
-        private readonly GameBoard? _gameBoard;
+        private ElementReference _mainDiv;
+        private GameBoard? _gameBoard;
         private bool _showStats;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -25,16 +25,16 @@ namespace BlazorApp.Client.Pages
             }
         }
 
-        public void ShowStats()
+        public async Task ShowStats()
         {
             _showStats = true;
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
-        private void CloseStats()
+        private async Task CloseStats()
         {
             _showStats = false;
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         private async Task KeyDown(KeyboardEventArgs e)
