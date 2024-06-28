@@ -1,18 +1,26 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="w-screen h-screen">
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="initial-scale=1, minimum-scale=1, maximum-scale=1, width=device-width, user-scalable=0">
+
+    <title>Wordle Blazor</title>
     <base href="/" />
-    <link rel="stylesheet" href="app.css" />
-    <link rel="stylesheet" href="BlazorApp.styles.css" />
-    <HeadOutlet @rendermode="InteractiveWebAssembly" />
+
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="css/blazor-errors.css" rel="stylesheet" />
+    <link href="BlazorApp.styles.css" rel="stylesheet" />
+    <link href="favicon.ico?" rel="icon" type="image/x-icon">
+    <HeadOutlet @rendermode="new InteractiveWebAssemblyRenderMode(prerender: false)" />
+
 </head>
 
-<body>
-    <Routes @rendermode="InteractiveWebAssembly" />
+<body class="m-0 p-0 select-none overflow-y-auto overflow-x-hidden font-sans w-screen h-screen touch-manipulation">
+
+    <Routes @rendermode="new InteractiveWebAssemblyRenderMode(prerender: false)" />
     <script src="_framework/blazor.web.js"></script>
+
 </body>
 
 </html>
