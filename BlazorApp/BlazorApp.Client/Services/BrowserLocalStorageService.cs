@@ -1,8 +1,4 @@
-﻿using BlazorApp.Client.Model;
-using BlazorApp.Client.Model.Enums;
-using Blazored.LocalStorage;
-
-namespace BlazorApp.Client.Services
+﻿namespace BlazorApp.Client.Services
 {
     public class BrowserLocalStorageService
     {
@@ -11,24 +7,22 @@ namespace BlazorApp.Client.Services
         public DateTime LastGamePlayedDate { get; set; }
 
         private readonly ILocalStorageService _localStorage;
-        private readonly LocalizationService _localizationService;
 
-        public BrowserLocalStorageService(ILocalStorageService localStorage, LocalizationService localizationService)
+        public BrowserLocalStorageService(ILocalStorageService localStorage)
         {
             _localStorage = localStorage;
-            _localizationService = localizationService;
         }
 
         public async Task<List<string>?> LoadGameStateFromLocalStorage()
         {
-            DateTime localStorageLastDayPlayed = await _localStorage.GetItemAsync<DateTime>(nameof(LastGamePlayedDate) + _localizationService.GetCurrentLanguageSuffix());
+            DateTime localStorageLastDayPlayed = await _localStorage.GetItemAsync<DateTime>(nameof(LastGamePlayedDate));
             var today = DateTime.Now.Date;
 
             if (localStorageLastDayPlayed == today)
             {
                 LastGamePlayedDate = localStorageLastDayPlayed;
 
-                var board = await _localStorage.GetItemAsync<List<string>>("BoardGrid" + _localizationService.GetCurrentLanguageSuffix());
+                var board = await _localStorage.GetItemAsync<List<string>>("BoardGrid");
 
                 if (board != null)
                 {
@@ -42,8 +36,8 @@ namespace BlazorApp.Client.Services
             else
             {
                 LastGamePlayedDate = GameStarted.Date;
-                await _localStorage.SetItemAsync(nameof(LastGamePlayedDate) + _localizationService.GetCurrentLanguageSuffix(), GameStarted.Date);
-                await _localStorage.RemoveItemAsync("BoardGrid" + _localizationService.GetCurrentLanguageSuffix());
+                await _localStorage.SetItemAsync(nameof(LastGamePlayedDate), GameStarted.Date);
+                await _localStorage.RemoveItemAsync("BoardGrid");
 
                 return null;
             }
@@ -51,17 +45,17 @@ namespace BlazorApp.Client.Services
 
         public async Task SaveCurrentBoardToLocalStorage(List<string> boardGridWords)
         {
-            await _localStorage.SetItemAsync("BoardGrid" + _localizationService.GetCurrentLanguageSuffix(), boardGridWords);
+            await _localStorage.SetItemAsync("BoardGrid", boardGridWords);
         }
 
         public async Task UpdateGameStats(GameState gameState, int currentRow)
         {
-            var lastGameFinishedDate = await _localStorage.GetItemAsync<DateTime>("lastGameFinishedDate" + _localizationService.GetCurrentLanguageSuffix());
+            var lastGameFinishedDate = await _localStorage.GetItemAsync<DateTime>("lastGameFinishedDate");
             var today = DateTime.Now.Date;
 
             if (lastGameFinishedDate != today)
             {
-                var stats = await _localStorage.GetItemAsync<Stats>(nameof(Stats) + _localizationService.GetCurrentLanguageSuffix());
+                var stats = await _localStorage.GetItemAsync<Stats>(nameof(Stats));
                 if (stats == null)
                 {
                     stats = new Stats();
@@ -85,13 +79,13 @@ namespace BlazorApp.Client.Services
                     stats.GamesResultDistribution[-1]++;
                 }
 
-                await _localStorage.SetItemAsync(nameof(Stats) + _localizationService.GetCurrentLanguageSuffix(), stats);
+                await _localStorage.SetItemAsync(nameof(Stats), stats);
             }
         }
 
         public async Task SaveLastGameFinishedDate()
         {
-            await _localStorage.SetItemAsync("lastGameFinishedDate" + _localizationService.GetCurrentLanguageSuffix(), LastGamePlayedDate);
+            await _localStorage.SetItemAsync("lastGameFinishedDate", LastGamePlayedDate);
         }
     }
 }

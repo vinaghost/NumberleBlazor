@@ -2,7 +2,7 @@
 {
     public enum KeyType
     {
-        Letter,
+        Number,
         Send,
         Remove
     }

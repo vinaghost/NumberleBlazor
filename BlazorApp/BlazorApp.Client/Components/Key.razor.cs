@@ -22,8 +22,8 @@ namespace BlazorApp.Client.Components
             .AddClass("transition-keyactive duration-150")
             .AddClass("hover:bg-keyhover active:bg-keyactive active:border-[3px] active:border-keyactiveborder")
             .AddClass(GetKeyStateClass())
-            .AddClass("w-[44px]", KeyType == KeyType.Letter)
-            .AddClass("w-[66px]", KeyType != KeyType.Letter).Build();
+            .AddClass("w-[44px]", KeyType == KeyType.Number)
+            .AddClass("w-[66px]", KeyType != KeyType.Number).Build();
 
         private string GetKeyStateClass()
         {
@@ -45,7 +45,7 @@ namespace BlazorApp.Client.Components
 
         private async Task KeyClicked()
         {
-            if (KeyType == KeyType.Letter)
+            if (KeyType == KeyType.Number)
             {
                 GameManagerService.EnterNextValue(KeyValue);
             }
@@ -63,7 +63,7 @@ namespace BlazorApp.Client.Components
 
         private string GetKeyText()
         {
-            if (KeyType == KeyType.Letter)
+            if (KeyType == KeyType.Number)
             {
                 return KeyValue.ToString();
             }

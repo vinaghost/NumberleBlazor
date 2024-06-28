@@ -1,6 +1,4 @@
-﻿using BlazorApp.Client.Model.Enums;
-
-namespace BlazorApp.Client.Model
+﻿namespace BlazorApp.Client.Model
 {
     public class BoardCell
     {

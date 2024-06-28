@@ -6,7 +6,7 @@ namespace BlazorApp.Client.Components
 
         protected override async Task OnInitializedAsync()
         {
-            var storedStats = await localStorage.GetItemAsync<Stats>(nameof(Stats) + LocalizationService.GetCurrentLanguageSuffix());
+            var storedStats = await localStorage.GetItemAsync<Stats>(nameof(Stats));
 
             if (storedStats != null)
                 _stats = storedStats;

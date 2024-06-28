@@ -40,11 +40,6 @@ namespace BlazorApp.Client.Services
             }
         }
 
-        public string GetCurrentLanguageSuffix()
-        {
-            return _currentLanguage == Language.English ? "-EN" : "-ES";
-        }
-
         private LocalizedString GetLocalizedString(string name)
         {
             return _localizer[name];
