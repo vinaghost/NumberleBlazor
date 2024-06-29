@@ -27,6 +27,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(BlazorApp.Client._Imports).Assembly);
 
+app.MapGet("/api/solution/{key}", (string key) => SolutionEncryption.Decrypt(key));
 app.MapGet("/api/solution", () => SolutionEncryption.Encrypt((int)(DateTime.Now.Ticks % 100000)));
 app.MapGet("/api/check", (string key, string guess) =>
 {

@@ -6,20 +6,18 @@ namespace BlazorApp.Client.Services
 {
     public class GameManagerService
     {
-        private BoardCell[,] _boardGrid;
-        public BoardCell[,] BoardGrid { get => _boardGrid; }
-
-        private string _solution = "";
-        public string Solution { get => _solution; }
-
-        private Dictionary<char, KeyState> _usedKeys;
-        public Dictionary<char, KeyState> UsedKeys { get => _usedKeys; }
-
-        public GameState _gameState;
-        public GameState GameState { get => _gameState; }
+        private const string solutionPath = "api/solution";
+        private const string checkPath = "api/check";
 
         public static readonly int RowSize = 6;
         public static readonly int ColumnSize = 5;
+        public BoardCell[,] BoardGrid { get; private set; } = new BoardCell[RowSize, ColumnSize];
+
+        public string SolutionKey { get; private set; } = "";
+        public string Solution { get; private set; } = "";
+        public Dictionary<char, KeyState> UsedKeys { get; private set; } = [];
+
+        public GameState GameState { get; private set; }
 
         public event Action<int> OnBoardLineWrongSolution = default!;
 
@@ -30,7 +28,6 @@ namespace BlazorApp.Client.Services
         private readonly BrowserLocalStorageService _localStorageService;
         private readonly LocalizationService _localizationService;
 
-        private List<string> _validWords = new();
         private int _currentRow;
         private int _currentColumn;
 
@@ -40,39 +37,28 @@ namespace BlazorApp.Client.Services
             _toastNotificationService = toastNotificationService;
             _localStorageService = localStorage;
             _localizationService = loc;
-            _boardGrid = new BoardCell[RowSize, ColumnSize];
-            _usedKeys = new Dictionary<char, KeyState>();
 
             PopulateBoard();
-        }
-
-        public async Task InitializeAndLoadData()
-        {
-            await _localizationService.GetCurrentCulture();
-            await LoadDictionary();
-            await GetTodaySolution();
         }
 
         public async Task StartGame()
         {
-            _gameState = GameState.Playing;
+            GameState = GameState.Playing;
 
-            var storedWords = await _localStorageService.LoadGameStateFromLocalStorage();
-            if (storedWords != null)
-                await SetBoardGridWords(storedWords);
-        }
+            var (storedSolutionKey, storedWords) = await _localStorageService.LoadGameStateFromLocalStorage();
 
-        public void Reset()
-        {
-            _boardGrid = new BoardCell[RowSize, ColumnSize];
-            _usedKeys = new Dictionary<char, KeyState>();
+            if (!string.IsNullOrEmpty(storedSolutionKey))
+            {
+                SolutionKey = storedSolutionKey;
 
-            PopulateBoard();
-
-            _currentRow = 0;
-            _currentColumn = 0;
-
-            _gameState = GameState.Playing;
+                if (storedWords != null)
+                    await SetBoardGridWords(storedWords);
+            }
+            else
+            {
+                SolutionKey = await GetNewKey();
+                await _localStorageService.SaveSolutionKeyToLocalStorage(SolutionKey);
+            }
         }
 
         public void EnterNextValue(char value)
@@ -124,72 +110,49 @@ namespace BlazorApp.Client.Services
 
                 string currentLine = currentLineBuilder.ToString();
 
-                if (currentLine.Length != _solution.Length)
+                if (currentLine.Length != ColumnSize)
                 {
                     _toastNotificationService.ShowToast(_localizationService["GameManagerNotEnoughLetters"]);
                     OnBoardLineWrongSolution.Invoke(_currentRow);
                     return;
                 }
 
-                if (!_validWords.Contains(currentLine) && currentLine != _solution)
+                var result = await _httpClient.GetFromJsonAsync<BoardCellState[]>($"{checkPath}?key={SolutionKey}&guess={currentLine}");
+                if (result == null)
                 {
-                    _toastNotificationService.ShowToast(_localizationService["GameManagerWordDoesNotExist"]);
+                    _toastNotificationService.ShowToast(_localizationService["GameManagerNotRespond"]);
                     OnBoardLineWrongSolution.Invoke(_currentRow);
                     return;
                 }
 
                 for (int i = 0; i < currentLine.Length; i++)
                 {
-                    var foundIndexes = new List<int>();
-
-                    for (int j = 0; j < _solution.Length; j++)
+                    BoardGrid[_currentRow, i].State = result[i];
+                    switch (result[i])
                     {
-                        if (_solution[j] == currentLine[i])
-                            foundIndexes.Add(j);
-                    }
+                        case BoardCellState.Correct:
+                            if (!UsedKeys.TryAdd(currentLine[i], KeyState.Correct))
+                                UsedKeys[currentLine[i]] = KeyState.Correct;
+                            break;
 
-                    if (foundIndexes.Count > 0)
-                    {
-                        if (foundIndexes.Contains(i))
-                        {
-                            _boardGrid[_currentRow, i].State = BoardCellState.Correct;
+                        case BoardCellState.IncorrectPosition:
+                            UsedKeys.TryAdd(currentLine[i], KeyState.IncorrectPosition);
+                            break;
 
-                            if (!_usedKeys.TryAdd(currentLine[i], KeyState.Correct))
-                                _usedKeys[currentLine[i]] = KeyState.Correct;
-                        }
-                        else
-                        {
-                            if (foundIndexes.Count > GetCurrentRowCorrectCellsFromValue(foundIndexes, currentLine[i]))
-                            {
-                                if (foundIndexes.Count > GetCurrentRowIncorrectPositionCellsFromValue(currentLine[i]))
-                                {
-                                    _boardGrid[_currentRow, i].State = BoardCellState.IncorrectPosition;
-                                }
-                                else
-                                {
-                                    _boardGrid[_currentRow, i].State = BoardCellState.Wrong;
-                                }
-                            }
-                            else
-                            {
-                                _boardGrid[_currentRow, i].State = BoardCellState.Wrong;
-                            }
+                        case BoardCellState.Wrong:
+                            UsedKeys.TryAdd(currentLine[i], KeyState.Wrong);
+                            break;
 
-                            _usedKeys.TryAdd(currentLine[i], KeyState.IncorrectPosition);
-                        }
-                    }
-                    else
-                    {
-                        _boardGrid[_currentRow, i].State = BoardCellState.Wrong;
-                        _usedKeys.TryAdd(currentLine[i], KeyState.Wrong);
+                        default:
+                            break;
                     }
                 }
 
                 OnCurrentLineCheckedSolution.Invoke(_currentRow);
 
-                if (currentLine == _solution)
+                if (Array.TrueForAll(result, x => x == BoardCellState.Correct))
                 {
-                    _gameState = GameState.Win;
+                    GameState = GameState.Win;
                 }
                 else if (_currentRow < RowSize - 1)
                 {
@@ -198,15 +161,15 @@ namespace BlazorApp.Client.Services
                 }
                 else
                 {
-                    _gameState = GameState.GameOver;
+                    GameState = GameState.GameOver;
                 }
 
                 await _localStorageService.SaveCurrentBoardToLocalStorage(GetBoardGridWords());
 
-                if (_gameState == GameState.Win || _gameState == GameState.GameOver)
+                if (GameState == GameState.Win || GameState == GameState.GameOver)
                 {
-                    await _localStorageService.UpdateGameStats(_gameState, _currentRow);
-                    await _localStorageService.SaveLastGameFinishedDate();
+                    Solution = await GetSolution();
+                    await _localStorageService.UpdateGameStats(GameState, _currentRow);
                 }
             }
         }
@@ -216,45 +179,16 @@ namespace BlazorApp.Client.Services
             return _currentRow;
         }
 
-        private async Task LoadDictionary()
+        private async Task<string> GetSolution()
         {
-            string dictionaryPath;
-
-            if (_localizationService.CurrentLanguage == Language.English)
-            {
-                dictionaryPath = "data/english-words.json";
-            }
-            else
-            {
-                dictionaryPath = "data/spanish-words.json";
-            }
-
-            var wordList = await _httpClient.GetFromJsonAsync<List<string>>(dictionaryPath);
-
-            _validWords = wordList ?? new List<string>();
+            var solution = await _httpClient.GetFromJsonAsync<string>($"{solutionPath}/{SolutionKey}");
+            return solution ?? "";
         }
 
-        private async Task GetTodaySolution()
+        private async Task<string> GetNewKey()
         {
-            string solutionPath;
-
-            if (_localizationService.CurrentLanguage == Language.English)
-            {
-                solutionPath = "data/daily-solutions-en.json";
-            }
-            else
-            {
-                solutionPath = "data/daily-solutions-sp.json";
-            }
-
-            var solutions = await _httpClient.GetFromJsonAsync<Dictionary<int, string>>(solutionPath);
-
-            if (solutions != null)
-            {
-                var currentTime = DateTime.Now;
-                _solution = solutions[currentTime.DayOfYear];
-                _localStorageService.GameStarted = currentTime;
-            }
+            var solutionKey = await _httpClient.GetFromJsonAsync<string>(solutionPath);
+            return solutionKey ?? "";
         }
 
         private void PopulateBoard()
@@ -263,34 +197,9 @@ namespace BlazorApp.Client.Services
             {
                 for (int j = 0; j < ColumnSize; j++)
                 {
-                    _boardGrid[i, j] = new BoardCell();
+                    BoardGrid[i, j] = new BoardCell();
                 }
             }
-        }
-
-        private int GetCurrentRowCorrectCellsFromValue(List<int> foundIndexes, char value)
-        {
-            var valueCells = Enumerable.Range(0, _boardGrid.GetLength(1))
-                .Select(x => _boardGrid[_currentRow, x])
-                .ToArray();
-
-            int count = 0;
-
-            for (int i = 0; i < valueCells.Length; i++)
-            {
-                if (valueCells[i].Value == value && foundIndexes.Contains(i))
-                    count++;
-            }
-
-            return count;
-        }
-
-        private int GetCurrentRowIncorrectPositionCellsFromValue(char value)
-        {
-            return Enumerable.Range(0, _boardGrid.GetLength(1))
-                    .Select(x => _boardGrid[_currentRow, x])
-                    .Where(x => x.Value == value && x.State == BoardCellState.IncorrectPosition)
-                    .ToArray().Length;
         }
 
         private List<string> GetBoardGridWords()
@@ -299,13 +208,13 @@ namespace BlazorApp.Client.Services
             var sb = new StringBuilder();
             for (int i = 0; i <= _currentRow; i++)
             {
-                if (_boardGrid[i, 0].State != BoardCellState.Empty && _boardGrid[i, 0].State != BoardCellState.Typing)
+                if (BoardGrid[i, 0].State != BoardCellState.Empty && BoardGrid[i, 0].State != BoardCellState.Typing)
                 {
                     sb.Clear();
 
                     for (int j = 0; j < ColumnSize; j++)
                     {
-                        sb.Append(_boardGrid[i, j].Value);
+                        sb.Append(BoardGrid[i, j].Value);
                     }
 
                     wordList.Add(sb.ToString());
@@ -323,8 +232,8 @@ namespace BlazorApp.Client.Services
 
                 foreach (var c in word)
                 {
-                    _boardGrid[_currentRow, col].State = BoardCellState.Typing;
-                    _boardGrid[_currentRow, col].Value = c;
+                    BoardGrid[_currentRow, col].State = BoardCellState.Typing;
+                    BoardGrid[_currentRow, col].Value = c;
 
                     col++;
                 }

@@ -1,7 +1,6 @@
 using BlazorApp.Client.Pages;
 using BlazorComponentUtilities;
 using Microsoft.AspNetCore.Components;
-using System.Timers;
 
 namespace BlazorApp.Client.Components
 {
@@ -26,38 +25,13 @@ namespace BlazorApp.Client.Components
         private bool ShowKeyboard => GameManagerService.GameState == GameState.NotStarted ||
                 GameManagerService.GameState == GameState.Playing;
 
-        private string _timeLeftForNextWord = "00:00:00";
-        private System.Timers.Timer _currentTimeUpdaterTimer = null!;
-        private readonly DateTime _today = DateTime.Today;
-
         protected override async Task OnInitializedAsync()
         {
-            _currentTimeUpdaterTimer = new System.Timers.Timer(1000);
-            _currentTimeUpdaterTimer.Elapsed += UpdateCurrentTime;
-            _currentTimeUpdaterTimer.Start();
-
             await GameManagerService.StartGame();
         }
 
         public void NotifyChange()
         {
-            InvokeAsync(StateHasChanged);
-        }
-
-        private void UpdateCurrentTime(object? sender, ElapsedEventArgs e)
-        {
-            var timeLeft = _today.AddDays(1) - DateTime.Now;
-
-            if (timeLeft > TimeSpan.Zero)
-            {
-                _timeLeftForNextWord = (DateTime.Today.AddDays(1) - DateTime.Now).ToString(@"hh\:mm\:ss");
-            }
-            else
-            {
-                _timeLeftForNextWord = "00:00:00";
-                _currentTimeUpdaterTimer.Dispose();
-            }
-
             InvokeAsync(StateHasChanged);
         }
 

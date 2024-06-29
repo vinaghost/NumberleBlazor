@@ -16,7 +16,4 @@ var host = builder.Build();
 
 await host.SetDefaultCulture();
 
-var gameManager = host.Services.GetRequiredService<GameManagerService>();
-await gameManager.InitializeAndLoadData();
-
 await host.RunAsync();

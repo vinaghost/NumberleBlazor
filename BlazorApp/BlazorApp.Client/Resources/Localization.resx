@@ -132,6 +132,9 @@
   <data name="GameManagerNotEnoughLetters" xml:space="preserve">
     <value>Not enough letters</value>
   </data>
+  <data name="GameManagerNotRespond" xml:space="preserve">
+    <value>Server is not respond</value>
+  </data>
   <data name="GameManagerWordDoesNotExist" xml:space="preserve">
     <value>Word does not exist</value>
   </data>
