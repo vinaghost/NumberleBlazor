@@ -181,13 +181,13 @@ namespace BlazorApp.Client.Services
 
         private async Task<string> GetSolution()
         {
-            var solution = await _httpClient.GetFromJsonAsync<string>($"{solutionPath}/{SolutionKey}");
+            var solution = await _httpClient.GetStringAsync($"{solutionPath}/{SolutionKey}");
             return solution ?? "";
         }
 
         private async Task<string> GetNewKey()
         {
-            var solutionKey = await _httpClient.GetFromJsonAsync<string>(solutionPath);
+            var solutionKey = await _httpClient.GetStringAsync(solutionPath);
             return solutionKey ?? "";
         }
 

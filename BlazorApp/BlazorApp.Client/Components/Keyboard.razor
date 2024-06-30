@@ -1,46 +1,20 @@
-﻿@inject ILocalStorageService LocalStorage
-@inject LocalizationService LocalizationService
-
-<CascadingValue Value="AncestorComponent">
+﻿<CascadingValue Value="AncestorComponent">
     <div class="flex flex-col justifyt-start left-0 right-0 bottom-0 mb-3 h-[164px] w-screen max-w-[480px]">
         <div class="flex justify-between mb-[5px] mx-1">
-            <Key KeyType="KeyType.Number" KeyValue="'Q'" />
-            <Key KeyType="KeyType.Number" KeyValue="'W'" />
-            <Key KeyType="KeyType.Number" KeyValue="'E'" />
-            <Key KeyType="KeyType.Number" KeyValue="'R'" />
-            <Key KeyType="KeyType.Number" KeyValue="'T'" />
-            <Key KeyType="KeyType.Number" KeyValue="'Y'" />
-            <Key KeyType="KeyType.Number" KeyValue="'U'" />
-            <Key KeyType="KeyType.Number" KeyValue="'I'" />
-            <Key KeyType="KeyType.Number" KeyValue="'O'" />
-            <Key KeyType="KeyType.Number" KeyValue="'P'" />
-        </div>
-
-        <div class="flex justify-between mb-[5px] mx-1">
-            <Key KeyType="KeyType.Number" KeyValue="'A'" />
-            <Key KeyType="KeyType.Number" KeyValue="'S'" />
-            <Key KeyType="KeyType.Number" KeyValue="'D'" />
-            <Key KeyType="KeyType.Number" KeyValue="'F'" />
-            <Key KeyType="KeyType.Number" KeyValue="'G'" />
-            <Key KeyType="KeyType.Number" KeyValue="'H'" />
-            <Key KeyType="KeyType.Number" KeyValue="'J'" />
-            <Key KeyType="KeyType.Number" KeyValue="'K'" />
-            <Key KeyType="KeyType.Number" KeyValue="'L'" />
-            @if (LocalizationService.CurrentLanguage == Language.Spanish)
-            {
-                <Key KeyType="KeyType.Number" KeyValue="'Ñ'" />
-            }
+            <Key KeyType="KeyType.Number" KeyValue="'0'" />
+            <Key KeyType="KeyType.Number" KeyValue="'1'" />
+            <Key KeyType="KeyType.Number" KeyValue="'2'" />
+            <Key KeyType="KeyType.Number" KeyValue="'3'" />
+            <Key KeyType="KeyType.Number" KeyValue="'4'" />
+            <Key KeyType="KeyType.Number" KeyValue="'5'" />
+            <Key KeyType="KeyType.Number" KeyValue="'6'" />
+            <Key KeyType="KeyType.Number" KeyValue="'7'" />
+            <Key KeyType="KeyType.Number" KeyValue="'8'" />
+            <Key KeyType="KeyType.Number" KeyValue="'9'" />
         </div>
 
         <div class="flex justify-between mb-[5px] mx-1">
             <Key KeyType="KeyType.Send" />
-            <Key KeyType="KeyType.Number" KeyValue="'Z'" />
-            <Key KeyType="KeyType.Number" KeyValue="'X'" />
-            <Key KeyType="KeyType.Number" KeyValue="'C'" />
-            <Key KeyType="KeyType.Number" KeyValue="'V'" />
-            <Key KeyType="KeyType.Number" KeyValue="'B'" />
-            <Key KeyType="KeyType.Number" KeyValue="'N'" />
-            <Key KeyType="KeyType.Number" KeyValue="'M'" />
             <Key KeyType="KeyType.Remove" />
         </div>
     </div>

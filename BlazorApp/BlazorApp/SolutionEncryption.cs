@@ -12,6 +12,10 @@
 
         public static string Decrypt(string encoded)
         {
+            if (string.IsNullOrEmpty(encoded))
+            {
+                return "00000";
+            }
             var swapStr = encoded[^1] + encoded[1..^1] + encoded[0];
             var reverseStr = Reverse(swapStr);
             var buffer = new Span<byte>(new byte[reverseStr.Length]);

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorApp.Client.Components
 {
-    public partial class GameBoard
+    public sealed partial class GameBoard
     {
         [Parameter, EditorRequired]
         public Numberle? AncestorComponent { get; set; }
