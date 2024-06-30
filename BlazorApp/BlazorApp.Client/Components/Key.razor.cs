@@ -3,16 +3,13 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorApp.Client.Components
 {
-    public partial class Key
+    public sealed partial class Key
     {
         [Parameter]
         public char KeyValue { get; set; }
 
         [Parameter]
         public KeyType KeyType { get; set; }
-
-        [CascadingParameter]
-        public GameBoard? AncestorComponent { get; set; }
 
         private string KeyClasses => new CssBuilder()
             .AddClass("h-[52px] cursor-pointer")
@@ -43,6 +40,14 @@ namespace BlazorApp.Client.Components
             };
         }
 
+        public void NotifyChange(char key)
+        {
+            if (key == KeyValue)
+            {
+                InvokeAsync(StateHasChanged);
+            }
+        }
+
         private async Task KeyClicked()
         {
             if (KeyType == KeyType.Number)
@@ -58,7 +63,7 @@ namespace BlazorApp.Client.Components
                 GameManagerService.RemoveLastValue();
             }
 
-            AncestorComponent?.NotifyChange();
+            MessageBusService.RefreshBoardGame();
         }
 
         private string GetKeyText()
@@ -79,6 +84,16 @@ namespace BlazorApp.Client.Components
             {
                 return "";
             }
+        }
+
+        protected override void OnInitialized()
+        {
+            MessageBusService.OnKeyRefresh += NotifyChange;
+        }
+
+        public void Dispose()
+        {
+            MessageBusService.OnKeyRefresh -= NotifyChange;
         }
     }
 }

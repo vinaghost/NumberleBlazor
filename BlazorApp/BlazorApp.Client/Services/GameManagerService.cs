@@ -27,16 +27,18 @@ namespace BlazorApp.Client.Services
         private readonly ToastNotificationService _toastNotificationService;
         private readonly BrowserLocalStorageService _localStorageService;
         private readonly LocalizationService _localizationService;
+        private readonly MessageBusService _messageBusService;
 
         private int _currentRow;
         private int _currentColumn;
 
-        public GameManagerService(HttpClient httpClient, ToastNotificationService toastNotificationService, BrowserLocalStorageService localStorage, LocalizationService loc)
+        public GameManagerService(HttpClient httpClient, ToastNotificationService toastNotificationService, BrowserLocalStorageService localStorage, LocalizationService loc, MessageBusService messageBusService)
         {
             _httpClient = httpClient;
             _toastNotificationService = toastNotificationService;
             _localStorageService = localStorage;
             _localizationService = loc;
+            _messageBusService = messageBusService;
 
             PopulateBoard();
         }
@@ -146,6 +148,8 @@ namespace BlazorApp.Client.Services
                         default:
                             break;
                     }
+
+                    _messageBusService.RefreshKey(currentLine[i]);
                 }
 
                 OnCurrentLineCheckedSolution.Invoke(_currentRow);

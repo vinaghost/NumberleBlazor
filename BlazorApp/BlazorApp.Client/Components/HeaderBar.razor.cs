@@ -1,13 +1,7 @@
-using BlazorApp.Client.Pages;
-using Microsoft.AspNetCore.Components;
-
 namespace BlazorApp.Client.Components
 {
     public partial class HeaderBar
     {
-        [Parameter, EditorRequired]
-        public Numberle? AncestorComponent { get; set; }
-
         private string GetCurrentLanguageFlagPath()
         {
             if (LocalizationService.CurrentLanguage == Language.English)

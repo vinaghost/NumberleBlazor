@@ -10,6 +10,7 @@ builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<GameManagerService>();
 builder.Services.AddScoped<ToastNotificationService>();
 builder.Services.AddScoped<BrowserLocalStorageService>();
+builder.Services.AddScoped<MessageBusService>();
 builder.Services.AddBlazoredLocalStorage();
 
 var host = builder.Build();

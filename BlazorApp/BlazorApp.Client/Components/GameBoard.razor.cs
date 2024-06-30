@@ -1,14 +1,9 @@
-using BlazorApp.Client.Pages;
 using BlazorComponentUtilities;
-using Microsoft.AspNetCore.Components;
 
 namespace BlazorApp.Client.Components
 {
     public sealed partial class GameBoard
     {
-        [Parameter, EditorRequired]
-        public Numberle? AncestorComponent { get; set; }
-
         private string? NextWordClasses => new CssBuilder()
             .AddClass("flex", ShowNextWord)
             .AddClass("hidden", !ShowNextWord)
@@ -27,10 +22,11 @@ namespace BlazorApp.Client.Components
 
         protected override async Task OnInitializedAsync()
         {
+            MessageBusService.OnBoardGameRefresh += NotifyChange;
             await GameManagerService.StartGame();
         }
 
-        public void NotifyChange()
+        private void NotifyChange()
         {
             InvokeAsync(StateHasChanged);
         }
@@ -45,7 +41,12 @@ namespace BlazorApp.Client.Components
 
         private void ShowStats()
         {
-            AncestorComponent?.ShowStats();
+            MessageBusService.TriggerStats();
+        }
+
+        public void Dispose()
+        {
+            MessageBusService.OnBoardGameRefresh -= NotifyChange;
         }
     }
 }

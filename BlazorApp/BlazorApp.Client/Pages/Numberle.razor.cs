@@ -3,18 +3,15 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorApp.Client.Pages
 {
-    public partial class Numberle
+    public sealed partial class Numberle
     {
         private readonly IReadOnlyList<string> _validKeys =
         [
             "ENTER", "BACKSPACE",
-            "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
-            "A", "S", "D", "F", "G", "H", "J", "K", "L", "Ñ",
-            "Z", "X", "C", "V", "B", "N", "M"
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
         ];
 
         private ElementReference _mainDiv;
-        private GameBoard? _gameBoard;
         private bool _showStats;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -25,10 +22,20 @@ namespace BlazorApp.Client.Pages
             }
         }
 
-        public async Task ShowStats()
+        protected override void OnInitialized()
+        {
+            MessageBusService.OnStatsTrigger += ShowStats;
+        }
+
+        public void Dispose()
+        {
+            MessageBusService.OnStatsTrigger -= ShowStats;
+        }
+
+        public void ShowStats()
         {
             _showStats = true;
-            await InvokeAsync(StateHasChanged);
+            InvokeAsync(StateHasChanged);
         }
 
         private async Task CloseStats()
@@ -55,7 +62,7 @@ namespace BlazorApp.Client.Pages
                     GameManagerService.EnterNextValue(Convert.ToChar(key));
                 }
 
-                _gameBoard?.NotifyChange();
+                MessageBusService.RefreshBoardGame();
             }
         }
     }

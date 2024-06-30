@@ -1,5 +1,8 @@
 ﻿@inject GameManagerService GameManagerService
 @inject LocalizationService LocalizationService
+@inject MessageBusService MessageBusService
+
+@implements IDisposable
 
 <div class="@KeyClasses" @onclick="KeyClicked">
     @GetKeyText()

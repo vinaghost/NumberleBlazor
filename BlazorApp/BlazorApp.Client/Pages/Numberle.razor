@@ -2,15 +2,18 @@
 
 @inject GameManagerService GameManagerService
 @inject LocalizationService LocalizationService
+@inject MessageBusService MessageBusService
+
+@implements IDisposable
 
 <PageTitle>Wordle</PageTitle>
 
 <div class="flex flex-col justify-between items-center h-full w-full outline-0" @ref="_mainDiv" tabindex="0" @onkeydown="KeyDown">
-    <HeaderBar AncestorComponent="this" />
+    <HeaderBar />
 
     <ToastNotification />
 
-    <GameBoard AncestorComponent="this" @ref="_gameBoard" />
+    <GameBoard/>
 
     @if (_showStats)
     {

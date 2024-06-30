@@ -1,5 +1,7 @@
 ﻿@inject GameManagerService GameManagerService
 @inject LocalizationService LocalizationService
+@inject MessageBusService MessageBusService
+@implements IDisposable
 
 <div class="flex flex-col my-5">
     <BoardLine RowIndex="0">
@@ -61,9 +63,7 @@
 </div>
 
 <div class="@KeyboardContainerClasses">
-    <CascadingValue Value="this">
-        <Keyboard />
-    </CascadingValue>
+    <Keyboard />
 </div>
 
 <div class="h-[90px]"></div>
