@@ -1,12 +1,12 @@
 ﻿@page "/"
 
 @inject GameManagerService GameManagerService
-@inject LocalizationService LocalizationService
+@inject IStringLocalizer<Localization> StringLocalizer
 @inject MessageBusService MessageBusService
 
 @implements IDisposable
 
-<PageTitle>Wordle</PageTitle>
+<PageTitle>Numberle</PageTitle>
 
 <div class="flex flex-col justify-between items-center h-full w-full outline-0" @ref="_mainDiv" tabindex="0" @onkeydown="KeyDown">
     <HeaderBar />
@@ -17,7 +17,7 @@
 
     @if (_showStats)
     {
-        <Modal Title="@LocalizationService["StatsTitle"]" OnCloseCallback="@CloseStats">
+        <Modal Title="@StringLocalizer["StatsTitle"]" OnCloseCallback="@CloseStats">
             <StatsDialog />
         </Modal>
     }

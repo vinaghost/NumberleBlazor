@@ -1,24 +1,30 @@
+using System.Globalization;
+
 namespace BlazorApp.Client.Components
 {
     public partial class HeaderBar
     {
-        private string GetCurrentLanguageFlagPath()
+        private CultureInfo? selectedCulture;
+
+        private static CultureInfo[] SupportedCultures { get; } =
+        [
+            new CultureInfo("en-US"),
+            new CultureInfo("es-ES"),
+        ];
+
+        protected override void OnInitialized()
         {
-            if (LocalizationService.CurrentLanguage == Language.English)
-            {
-                return "images/english.svg";
-            }
-            else
-            {
-                return "images/spanish.svg";
-            }
+            selectedCulture = CultureInfo.CurrentCulture;
         }
 
-        private async Task ChangeLanguage()
+        private async Task ApplySelectedCultureAsync()
         {
-            await LocalizationService.SwitchLanguage();
+            if (CultureInfo.CurrentCulture != selectedCulture)
+            {
+                await LocalStorage.SetItemAsync("CurrentCulture", selectedCulture!.Name);
 
-            NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
+                NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
+            }
         }
     }
 }

@@ -1,40 +1,31 @@
 ﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Blazored.LocalStorage;
 using System.Globalization;
 
 namespace BlazorApp.Client.Extensions
 {
     public static class WebAssemblyHostExtension
     {
-        public async static Task SetDefaultCulture(this WebAssemblyHost host)
+        public static CultureInfo[] SupportedCultures { get; } =
+        [
+            new CultureInfo("en-US"),
+            new CultureInfo("es-ES"),
+        ];
+
+        public static async Task SetDefaultCulture(this WebAssemblyHost host)
         {
             var localStorage = host.Services.GetRequiredService<ILocalStorageService>();
 
             var storedCulture = await localStorage.GetItemAsync<string>("CurrentCulture");
-
-            CultureInfo culture;
-
-            if (storedCulture != null)
+            if (storedCulture == null)
             {
-                if (storedCulture.StartsWith("es"))
-                    culture = new CultureInfo("es-ES");
-                else
-                    culture = new CultureInfo("en-US");
+                await localStorage.SetItemAsync("CurrentCulture", SupportedCultures[0]);
             }
-            else
-            {
-                var browserCulture = CultureInfo.CurrentCulture.Name;
 
-                if (browserCulture.StartsWith("es"))
-                {
-                    await localStorage.SetItemAsync("CurrentCulture", "es-ES");
-                    culture = new CultureInfo("es-ES");
-                }
-                else
-                {
-                    await localStorage.SetItemAsync("CurrentCulture", "en-US");
-                    culture = new CultureInfo("en-US");
-                }
+            var culture = CultureInfo.GetCultureInfo(storedCulture ?? CultureInfo.CurrentCulture.Name);
+            if (!SupportedCultures.Select(x => x.Name).Contains(culture.Name))
+            {
+                culture = SupportedCultures[0];
+                await localStorage.SetItemAsync(key: "CurrentCulture", SupportedCultures[0]);
             }
 
             CultureInfo.DefaultThreadCurrentCulture = culture;

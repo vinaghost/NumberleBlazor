@@ -1,8 +1,9 @@
 ﻿namespace BlazorApp.Client.Services
 {
-    public class ToastNotificationService : IDisposable
+    public sealed class ToastNotificationService : IDisposable
     {
         public event Action<string> OnShow = null!;
+
         public event Action OnHide = null!;
 
         private System.Timers.Timer _countdown = null!;

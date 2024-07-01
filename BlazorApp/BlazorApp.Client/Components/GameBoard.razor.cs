@@ -34,9 +34,9 @@ namespace BlazorApp.Client.Components
         private string GetNextWordMessage()
         {
             if (GameManagerService.GameState == GameState.Win)
-                return LocalizationService["GameboardWin"];
+                return StringLocalizer["GameboardWin"];
             else
-                return LocalizationService["GameboardLose"];
+                return StringLocalizer["GameboardLose"];
         }
 
         private void ShowStats()

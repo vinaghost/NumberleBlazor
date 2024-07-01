@@ -1,5 +1,5 @@
 ﻿@inject GameManagerService GameManagerService
-@inject LocalizationService LocalizationService
+@inject IStringLocalizer<Localization> StringLocalizer
 @inject MessageBusService MessageBusService
 @implements IDisposable
 
@@ -58,9 +58,9 @@
     <p class="text-2xl font-bold">@GetNextWordMessage()</p>
     @if (GameManagerService.GameState == GameState.GameOver)
     {
-        <p>@LocalizationService["GameboardTheWordWas"]: @GameManagerService.Solution</p>
+        <p>@StringLocalizer["GameboardTheWordWas"]: @GameManagerService.Solution</p>
     }
-    <Button Text="@LocalizationService["StatsTitle"]" OnClick="@ShowStats" Class="mt-2" />
+    <Button Text="@StringLocalizer["StatsTitle"]" OnClick="@ShowStats" Class="mt-2" />
 </div>
 
 <div class="@KeyboardContainerClasses">
