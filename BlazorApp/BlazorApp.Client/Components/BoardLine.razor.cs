@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorApp.Client.Components
 {
-    public partial class BoardLine
+    public sealed partial class BoardLine
     {
         [Parameter, EditorRequired]
         public int RowIndex { get; set; }
@@ -14,12 +14,12 @@ namespace BlazorApp.Client.Components
 
         protected override void OnInitialized()
         {
-            GameManagerService.OnBoardLineWrongSolution += TriggerAnimation;
+            MessageBusService.OnBoardLineWrongSolution += TriggerAnimation;
         }
 
         public void Dispose()
         {
-            GameManagerService.OnBoardLineWrongSolution -= TriggerAnimation;
+            MessageBusService.OnBoardLineWrongSolution -= TriggerAnimation;
         }
 
         private void TriggerAnimation(int currentRow)
