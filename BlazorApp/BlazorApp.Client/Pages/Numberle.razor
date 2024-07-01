@@ -1,7 +1,6 @@
 ﻿@page "/"
 
 @inject GameManagerService GameManagerService
-@inject IStringLocalizer<Localization> StringLocalizer
 @inject MessageBusService MessageBusService
 
 @implements IDisposable
@@ -17,7 +16,7 @@
 
     @if (_showStats)
     {
-        <Modal Title="@StringLocalizer["StatsTitle"]" OnCloseCallback="@CloseStats">
+        <Modal Title="STATISTICS" OnCloseCallback="@CloseStats">
             <StatsDialog />
         </Modal>
     }

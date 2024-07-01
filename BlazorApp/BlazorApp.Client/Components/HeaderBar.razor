@@ -1,6 +1,5 @@
-﻿@using BlazorApp.Client.Extensions
-@using System.Globalization
-@inject IStringLocalizer<Localization> StringLocalizer
+﻿@using System.Globalization
+
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavManager
 @inject MessageBusService MessageBusService
@@ -15,16 +14,6 @@
     </div>
 
     <div class="flex-1 flex justify-end mr-4 mt-0.5">
-        <img class="mr-2 cursor-pointer" src="images/chart.svg" alt="Statistics" title="@StringLocalizer["HeaderShowStatistics"]" @onclick="MessageBusService.TriggerStats">
-        <p>
-            <select @bind="selectedCulture" @bind:after="ApplySelectedCultureAsync">
-                @foreach (var culture in SupportedCultures)
-                {
-                    <option value="@culture">
-                        @culture.NativeName
-                    </option>
-                }
-            </select> 
-        </p>
+        <img class="mr-2 cursor-pointer" src="images/chart.svg" alt="Statistics" title="Show statistics" @onclick="MessageBusService.TriggerStats">
     </div>
 </div>

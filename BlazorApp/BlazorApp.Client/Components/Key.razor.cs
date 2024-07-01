@@ -74,11 +74,11 @@ namespace BlazorApp.Client.Components
             }
             else if (KeyType == KeyType.Send)
             {
-                return StringLocalizer["KeyboardSend"];
+                return "SEND";
             }
             else if (KeyType == KeyType.Remove)
             {
-                return StringLocalizer["KeyboardDel"];
+                return "DEL";
             }
             else
             {

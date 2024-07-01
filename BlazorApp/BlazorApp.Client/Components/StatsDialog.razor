@@ -1,5 +1,5 @@
 ﻿@inject ILocalStorageService localStorage
-@inject IStringLocalizer<Localization> StringLocalizer
+
 
 <div class="flex flex-col items-center w-full">
 
@@ -7,27 +7,27 @@
 
         <div class="bg-ultralightgray rounded-lg flex flex-col justify-center items-center pt-1 pb-1.5">
             <p class="text-[35px] leading-none">@_stats.GamesPlayed</p>
-            <p class="text-[13px] font-thin ">@StringLocalizer["StatsGamesPlayed"]</p>
+            <p class="text-[13px] font-thin ">Games Played</p>
         </div>
 
         <div class="bg-ultralightgray rounded-lg flex flex-col justify-center items-center pt-1 pb-1.5">
             <p class="text-[35px] leading-none">@GetGamesWonPercent()</p>
-            <p class="text-[13px] font-thin ">@StringLocalizer["StatsGamesWonPercent"]</p>
+            <p class="text-[13px] font-thin ">Games won %</p>
         </div>
 
         <div class="bg-ultralightgray rounded-lg flex flex-col justify-center items-center pt-1 pb-1.5">
             <p class="text-[35px] leading-none">@_stats.CurrentStreak</p>
-            <p class="text-[13px] font-thin ">@StringLocalizer["StatsCurrentStreak"]</p>
+            <p class="text-[13px] font-thin ">Current streak</p>
         </div>
 
         <div class="bg-ultralightgray rounded-lg flex flex-col justify-center items-center pt-1 pb-1.5">
             <p class="text-[35px] leading-none">@_stats.BestStreak</p>
-            <p class="text-[13px] font-thin ">@StringLocalizer["StatsBestStreak"]</p>
+            <p class="text-[13px] font-thin ">Best streak</p>
         </div>
 
     </div>
 
-    <p class="text-lg font-bold mt-4">@StringLocalizer["StatsResultDistribution"]</p>
+    <p class="text-lg font-bold mt-4">RESULT DISTRIBUTION</p>
 
     <div class="mt-2">
         <p>1: @_stats.GamesResultDistribution[1] (@GetGameResultDistributionPercent(1) %)</p>

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Localization;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text;
 using BoardCell = BlazorApp.Client.Model.BoardCell;
 
@@ -24,18 +23,16 @@ namespace BlazorApp.Client.Services
         private readonly ToastNotificationService _toastNotificationService;
         private readonly BrowserLocalStorageService _localStorageService;
         private readonly MessageBusService _messageBusService;
-        private readonly IStringLocalizer<Localization> _localizer;
 
         private int _currentRow;
         private int _currentColumn;
 
-        public GameManagerService(HttpClient httpClient, ToastNotificationService toastNotificationService, BrowserLocalStorageService localStorage, MessageBusService messageBusService, IStringLocalizer<Localization> localizer)
+        public GameManagerService(HttpClient httpClient, ToastNotificationService toastNotificationService, BrowserLocalStorageService localStorage, MessageBusService messageBusService)
         {
             _httpClient = httpClient;
             _toastNotificationService = toastNotificationService;
             _localStorageService = localStorage;
             _messageBusService = messageBusService;
-            _localizer = localizer;
 
             PopulateBoard();
         }
@@ -111,7 +108,7 @@ namespace BlazorApp.Client.Services
 
                 if (currentLine.Length != ColumnSize)
                 {
-                    _toastNotificationService.ShowToast(_localizer["GameManagerNotEnoughLetters"]);
+                    _toastNotificationService.ShowToast("Not enough letters");
                     _messageBusService.TriggerBoardLineWrongSolution(_currentRow);
                     return;
                 }
@@ -119,7 +116,7 @@ namespace BlazorApp.Client.Services
                 var result = await _httpClient.GetFromJsonAsync<BoardCellState[]>($"{checkPath}?key={SolutionKey}&guess={currentLine}");
                 if (result == null)
                 {
-                    _toastNotificationService.ShowToast(_localizer["GameManagerNotRespond"]);
+                    _toastNotificationService.ShowToast("Server is not respond");
                     _messageBusService.TriggerBoardLineWrongSolution(_currentRow);
                     return;
                 }

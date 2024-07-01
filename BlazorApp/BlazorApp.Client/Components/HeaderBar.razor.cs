@@ -6,12 +6,6 @@ namespace BlazorApp.Client.Components
     {
         private CultureInfo? selectedCulture;
 
-        private static CultureInfo[] SupportedCultures { get; } =
-        [
-            new CultureInfo("en-US"),
-            new CultureInfo("es-ES"),
-        ];
-
         protected override void OnInitialized()
         {
             selectedCulture = CultureInfo.CurrentCulture;
